@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Test Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e4e4e7;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #94a3b8;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .form-panel {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #334155;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 15px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #e4e4e7;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #e4e4e7;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+
+        select option {
+            background: #1e293b;
+            color: #e4e4e7;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .output-panel {
+            background: #1e293b;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            min-height: 500px;
+        }
+
+        .output-header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px 30px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .output-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .test-badge {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-copy {
+            padding: 8px 16px;
+            background: #334155;
+            border: none;
+            border-radius: 8px;
+            color: #e4e4e7;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-copy:hover {
+            background: #475569;
+        }
+
+        .btn-copy.copied {
+            background: #10b981;
+        }
+
+        .output-content {
+            padding: 30px;
+        }
+
+        .test-code {
+            margin: 0;
+            padding: 25px;
+            background: #0f172a;
+            color: #e4e4e7;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .no-output {
+            text-align: center;
+            padding: 100px 40px;
+            color: #64748b;
+        }
+
+        .no-output-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .no-output p {
+            font-size: 1.1em;
+        }
+
+        .stats-bar {
+            background: #0f172a;
+            padding: 15px 30px;
+            display: flex;
+            gap: 30px;
+            border-top: 1px solid #334155;
+            font-size: 0.9em;
+        }
+
+        .stat-item {
+            color: #94a3b8;
+        }
+
+        .stat-value {
+            color: #3b82f6;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-panel {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Test Generator</h1>
+            <p>Generate comprehensive test cases with artificial intelligence</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="form-panel">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="requirements">REQUIREMENT</label>
+                        <textarea 
+                            name="requirements" 
+                            id="requirements" 
+                            placeholder="Describe the functionality to test..."
+                            required>{{ requirements }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test_type">TEST TYPE</label>
+                        <select name="test_type" id="test_type">
+                            <option value="gherkin" {% if test_type == 'gherkin' %}selected{% endif %}>Gherkin BDD</option>
+                            <option value="pytest" {% if test_type == 'pytest' %}selected{% endif %}>Pytest Unit</option>
+                            <option value="api" {% if test_type == 'api' %}selected{% endif %}>API Tests</option>
+                            <option value="data" {% if test_type == 'data' %}selected{% endif %}>Test Data</option>
+                            <option value="owasp" {% if test_type == 'owasp' %}selected{% endif %}>OWASP Security</option>
+                            <option value="performance" {% if test_type == 'performance' %}selected{% endif %}>Performance</option>
+                            <option value="e2e" {% if test_type == 'e2e' %}selected{% endif %}>E2E Automation</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-generate">Generate Tests</button>
+                </form>
+            </div>
+
+            <div class="output-panel">
+                {% if output %}
+                <div class="output-header">
+                    <div class="output-title">Generated Test Cases</div>
+                    <div class="output-meta">
+                        <span class="test-badge">{{ test_type }}</span>
+                        <button class="btn-copy" onclick="copyAllCode()">Copy All</button>
+                    </div>
+                </div>
+
+                <div class="output-content">
+                    <pre class="test-code" id="codeOutput">{{ output }}</pre>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        Total Lines: <span class="stat-value">{{ output.count('\n') + 1 }}</span>
+                    </div>
+                    <div class="stat-item">
+                        Characters: <span class="stat-value">{{ output|length }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-output">
+                    <div class="no-output-icon">⚡</div>
+                    <p>Configure your test parameters and generate test cases</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyAllCode() {
+            const codeElement = document.getElementById('codeOutput');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeElement.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            const btn = document.querySelector('.btn-copy');
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+
+            setTimeout(() => {
+                btn.textContent = 'Copy All';
+                btn.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

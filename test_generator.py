@@ -1,20 +1,23 @@
-import subprocess
-import json
+import subprocess #permet d'excuter une commande systeme, ici pour appeler ollama depuis python
+import json #permet de formater proprement les requirements envoyés au modèle
 
+#Initialise lobjet ollama avec modele
 class TestGenerator:
     def __init__(self, model_name="mistral"):
         self.model_name = model_name
     
     def generate_tests(self, requirements, test_type="gherkin"):
-        """
-        test_type: 
-        "gherkin", "pytest", "api", "data", 
-        "owasp", "performance", "e2e"
+        """Reçoit :
+            le texte des requirements
+            le type de test (gherkin, pytest, api, data, etc.)
+            Essaye de générer les tests via Ollama.
+            Si une erreur survient, retourne des tests MOCK.
         """
         try:
             print(f"🚀 Génération de tests ({test_type}) via Ollama…")
 
             response = self._call_ollama(requirements, test_type)
+            "Cette fonction prépare les instructions à envoyer au modèle selon le type de test"
             cleaned = self._postprocess_output(response)
             return cleaned
         
@@ -29,10 +32,16 @@ class TestGenerator:
         # =============================
         # INSTRUCTIONS PAR TYPE DE TEST
         # =============================
-
+        #Générer des scénarios Given/When/Then
+        #Générer du code Python avec des assert"
+        #Générer du JSON/Postman avec URL, méthode, body, headers, validations"
+        #Générer des données valides, invalides, valeurs limites"
+        #Générer des tests de sécurité : payload, vulnérabilité, comportement attendu"
+        #Scripts Locust ou XML JMeter"
+        #Scripts Playwright ou Selenium exécutables"
         if test_type == "gherkin":
             instructions = "Generate detailed Gherkin scenarios."
-
+        
         elif test_type == "pytest":
             instructions = """
 Generate pytest unit tests.
@@ -119,6 +128,7 @@ Generate high-quality professional test scripts.
 """
 
         # Appel au modèle Ollama
+        #Appelle directement la CLI d’Ollama
         result = subprocess.run(
             ["ollama", "run", self.model_name],
             input=prompt.encode("utf-8"),
@@ -133,6 +143,7 @@ Generate high-quality professional test scripts.
 
     def _postprocess_output(self, text):
         """Nettoyage simple du texte"""
+        #supprime les espaces ou retours inutiles
         return text.strip()
 
 

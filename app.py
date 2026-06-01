@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request
-from test_generator import generate_test_cases
-import re
+from flask import Flask, render_template, request #framework web
+from test_generator import generate_test_cases #fonction importée du fichier précédent
+import re #pour nettoyer la sortie de l’IA
 
 app = Flask(__name__)
 
@@ -58,7 +58,8 @@ def clean_ollama_output(text):
     cleaned_text = re.sub(r'\n{3,}', '\n\n', cleaned_text)
     
     return cleaned_text
-
+#GET : affiche le formulaire vide.
+#POST : récupère les valeurs du formulaire 
 @app.route("/", methods=["GET", "POST"])
 def index():
     scenarios = ""
@@ -78,6 +79,6 @@ def index():
         test_type=test_type,
         requirements=requirements
     )
-
+#Lancement du serveur
 if __name__ == "__main__":
     app.run(debug=True)

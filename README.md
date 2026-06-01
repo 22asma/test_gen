@@ -14,47 +14,6 @@ Une application web moderne et élégante qui utilise l'Intelligence Artificiell
 
 ---
 
-## 🏗️ Architecture du Système
-
-Le projet repose sur une architecture simple et efficace composée d'un serveur Web léger, d'une couche d'orchestration IA locale et d'un processeur de texte.
-
-```mermaid
-flowchart TD
-    subgraph Frontend [Interface Utilisateur]
-        UI[Navigateur Web - HTML5/CSS3]
-    end
-
-    subgraph Backend [Serveur Flask]
-        APP[app.py - Contrôleur Flask]
-        CLEAN[Nettoyeur Regex - clean_ollama_output]
-    end
-
-    subgraph AI [Couche Génération IA]
-        GEN[test_generator.py - TestGenerator]
-        OLLAMA[CLI Ollama - Modèle Mistral]
-        MOCK[Fallback - Générateur MOCK]
-    end
-
-    UI -->|1. Envoi exigences & type de test| APP
-    APP -->|2. Demande de génération| GEN
-    
-    GEN -->|3a. Exécute prompt| OLLAMA
-    OLLAMA -->|4a. Retourne réponse brute| GEN
-    
-    GEN -.->|3b. Si Ollama indisponible (erreur)| MOCK
-    MOCK -.->|4b. Retourne tests mockés de secours| GEN
-
-    GEN -->|5. Nettoyage de base| APP
-    APP -->|6. Nettoyage des phrases conversationnelles| CLEAN
-    CLEAN -->|7. Rendu HTML final avec statistiques| UI
-
-    style UI fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#fff
-    style APP fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#fff
-    style GEN fill:#1e293b,stroke:#ec4899,stroke-width:2px,color:#fff
-    style OLLAMA fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
-    style MOCK fill:#0f172a,stroke:#f59e0b,stroke-dasharray: 5 5,color:#fff
-```
-
 ### 🔁 Flux de fonctionnement :
 1. **Saisie utilisateur** : L'utilisateur entre les spécifications fonctionnelles et sélectionne le type de test (ex: pytest, playwirght, etc.).
 2. **Orchestration** : `test_generator.py` prépare un prompt structuré et interroge **Ollama** via des appels système en tâche de fond.
